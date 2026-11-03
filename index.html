@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetLearn CS — Компьютерные Сети: Теория, Практика и Тест</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.3);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('theory')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                        <i data-lucide="network" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-cyan-400 bg-clip-text text-transparent">NetLearn CS</span>
+                        <span class="block text-[10px] text-cyan-400 font-mono tracking-widest uppercase">Networking Edition</span>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons -->
+                <nav class="hidden md:flex space-x-1 bg-dark-800/80 p-1 rounded-xl border border-gray-800">
+                    <button onclick="switchTab('theory')" id="nav-theory" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-cyan-400 bg-dark-700 shadow-sm">
+                        <i data-lucide="book-open" class="w-4 h-4"></i> Теория
+                    </button>
+                    <button onclick="switchTab('practice')" id="nav-practice" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-gray-400 hover:text-white">
+                        <i data-lucide="terminal" class="w-4 h-4"></i> Практика
+                    </button>
+                    <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-gray-400 hover:text-white">
+                        <i data-lucide="award" class="w-4 h-4"></i> Тест на знания
+                    </button>
+                    <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-gray-400 hover:text-white">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i> Админ-Панель
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg text-gray-400 hover:text-white focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 border-t border-gray-800 bg-dark-900">
+            <button onclick="switchTab('theory')" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-dark-700 flex items-center gap-2">
+                <i data-lucide="book-open" class="w-4 h-4 text-cyan-400"></i> Теория
+            </button>
+            <button onclick="switchTab('practice')" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-dark-700 flex items-center gap-2">
+                <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Практика
+            </button>
+            <button onclick="switchTab('quiz')" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-dark-700 flex items-center gap-2">
+                <i data-lucide="award" class="w-4 h-4 text-cyan-400"></i> Тест на знания
+            </button>
+            <button onclick="switchTab('admin')" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-dark-700 flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i> Админ-Панель
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- ==================== SECTION 1: THEORY ==================== -->
+        <section id="section-theory" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl p-8 md:p-12 overflow-hidden border border-brand-500/20 bg-gradient-to-r from-dark-800 via-dark-900 to-dark-800 glow-cyan">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-500">
+                        <i data-lucide="zap" class="w-3.5 h-3.5"></i> Фундамент Компьютерных Сетей
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        Как устроена глобальная паутина и передача данных
+                    </h1>
+                    <p class="text-gray-400 text-base md:text-lg leading-relaxed">
+                        Всеобъемлющее руководство от модели OSI и стека TCP/IP до адресации пакетов, работы маршрутизаторов и протоколов безопасности.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Theory Grid Navigator -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- OSI Card -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">1. Эталонная Модель OSI</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        7 уровней взаимодействия систем: от физических электрических импульсов до прикладных интерфейсов программ.
+                    </p>
+                    <a href="#osi-section" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1">Изучить модель <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+
+                <!-- TCP/IP & Protocols Card -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">2. TCP vs UDP и Сетевые Протоколы</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Разница между надежной доставкой с подтверждением (TCP) и быстрой трансляцией потокового видео/игр (UDP).
+                    </p>
+                    <a href="#protocols-section" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1">Изучить протоколы <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+
+                <!-- IP & Hardware Card -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">3. IP-Адресация и Оборудование</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Разница между Коммутатором (Switch), Маршрутизатором (Router) и Концентратором (Hub), а также IPv4/IPv6 подсети.
+                    </p>
+                    <a href="#hardware-section" class="text-xs font-semibold text-purple-400 hover:text-purple-300 inline-flex items-center gap-1">Изучить железную часть <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+            </div>
+
+            <!-- Detailed Section: OSI Model -->
+            <div id="osi-section" class="glass-panel rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="flex items-center gap-3 border-b border-gray-800 pb-4">
+                    <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400"><i data-lucide="layers" class="w-6 h-6"></i></div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Модель OSI (Open Systems Interconnection)</h2>
+                        <p class="text-sm text-gray-400">7-уровневый концептуальный фреймворк передачи данных</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Layer 7 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-cyan-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-sm">7</span>
+                            <div>
+                                <h4 class="font-bold text-white">Прикладной уровень (Application Layer)</h4>
+                                <p class="text-xs text-gray-400">Интерфейс между пользователем и сетью. Браузеры, почтовые клиенты.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-cyan-300 text-xs font-mono">HTTP/HTTPS</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-cyan-300 text-xs font-mono">DNS</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-cyan-300 text-xs font-mono">FTP</span>
+                        </div>
+                    </div>
+                    <!-- Layer 6 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-blue-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center text-sm">6</span>
+                            <div>
+                                <h4 class="font-bold text-white">Уровень представления (Presentation Layer)</h4>
+                                <p class="text-xs text-gray-400">Кодирование, шифрование (SSL/TLS), сжатие данных (JPEG, ASCII, JSON).</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-blue-300 text-xs font-mono">TLS/SSL</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-blue-300 text-xs font-mono">JPEG/PNG</span>
+                        </div>
+                    </div>
+                    <!-- Layer 5 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-indigo-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center text-sm">5</span>
+                            <div>
+                                <h4 class="font-bold text-white">Сеансовый уровень (Session Layer)</h4>
+                                <p class="text-xs text-gray-400">Управление сессиями связи, синхронизация и поддержание соединения.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-indigo-300 text-xs font-mono">RPC</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-indigo-300 text-xs font-mono">SOCKS</span>
+                        </div>
+                    </div>
+                    <!-- Layer 4 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-emerald-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm">4</span>
+                            <div>
+                                <h4 class="font-bold text-white">Транспортный уровень (Transport Layer)</h4>
+                                <p class="text-xs text-gray-400">Сквозная доставка данных, порты (0-65535), разбиение на сегменты.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-emerald-300 text-xs font-mono">TCP</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-emerald-300 text-xs font-mono">UDP</span>
+                        </div>
+                    </div>
+                    <!-- Layer 3 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-yellow-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 font-bold flex items-center justify-center text-sm">3</span>
+                            <div>
+                                <h4 class="font-bold text-white">Сетевой уровень (Network Layer)</h4>
+                                <p class="text-xs text-gray-400">Маршрутизация пакетов между разными сетями по IP-адресам.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-yellow-300 text-xs font-mono">IPv4 / IPv6</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-yellow-300 text-xs font-mono">ICMP (Ping)</span>
+                        </div>
+                    </div>
+                    <!-- Layer 2 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-orange-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 font-bold flex items-center justify-center text-sm">2</span>
+                            <div>
+                                <h4 class="font-bold text-white">Канальный уровень (Data Link Layer)</h4>
+                                <p class="text-xs text-gray-400">Передача кадров (Frames) внутри локальной сети по физическим MAC-адресам.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-orange-300 text-xs font-mono">Ethernet</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-orange-300 text-xs font-mono">Wi-Fi (802.11)</span>
+                        </div>
+                    </div>
+                    <!-- Layer 1 -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-rose-400">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 font-bold flex items-center justify-center text-sm">1</span>
+                            <div>
+                                <h4 class="font-bold text-white">Физический уровень (Physical Layer)</h4>
+                                <p class="text-xs text-gray-400">Передача сырых битов (0 и 1) в виде электрических или оптических сигналов.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-rose-300 text-xs font-mono">Кабель RJ45</span>
+                            <span class="px-2.5 py-1 rounded bg-dark-900 text-rose-300 text-xs font-mono">Оптоволокно</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Section: TCP vs UDP & Infrastructure -->
+            <div id="protocols-section" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- TCP vs UDP -->
+                <div class="glass-panel rounded-3xl p-6 md:p-8 space-y-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="git-compare" class="w-5 h-5 text-emerald-400"></i> TCP против UDP
+                    </h3>
+                    <div class="space-y-4 text-sm text-gray-300">
+                        <div class="p-4 rounded-xl bg-dark-800/80 border border-emerald-500/20">
+                            <h4 class="font-bold text-emerald-400 text-base mb-1">TCP (Transmission Control Protocol)</h4>
+                            <p class="text-xs text-gray-400 mb-2">Надежное соединение с гарантией доставки.</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs text-gray-300">
+                                <li>Трехстороннее рукопожатие (SYN $\rightarrow$ SYN-ACK $\rightarrow$ ACK).</li>
+                                <li>Автоматический повтор при потере пакетов.</li>
+                                <li>Применение: Сайты (HTTPS), Почта (SMTP), Файлы (FTP).</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-xl bg-dark-800/80 border border-yellow-500/20">
+                            <h4 class="font-bold text-yellow-400 text-base mb-1">UDP (User Datagram Protocol)</h4>
+                            <p class="text-xs text-gray-400 mb-2">Быстрая передача без подтверждения получений.</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs text-gray-300">
+                                <li>Минимальная задержка (no overhead).</li>
+                                <li>Потеря пакета не останавливает поток.</li>
+                                <li>Применение: Онлайн-игры, Стриминг, VoIP, DNS.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardware Breakdown -->
+                <div id="hardware-section" class="glass-panel rounded-3xl p-6 md:p-8 space-y-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="router" class="w-5 h-5 text-purple-400"></i> Сетевые Устройства
+                    </h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3.5 rounded-xl bg-dark-800/80 border border-gray-800">
+                            <span class="font-bold text-purple-400 text-sm block mb-1">Маршрутизатор (Router) — 3 уровень OSI</span>
+                            <p class="text-gray-400">Соединяет <b>разные</b> сети (например, вашу домашнюю LAN сеть с глобальным Интернетом WAN). Работает по IP-адресам.</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-dark-800/80 border border-gray-800">
+                            <span class="font-bold text-cyan-400 text-sm block mb-1">Коммутатор (Switch) — 2 уровень OSI</span>
+                            <p class="text-gray-400">Соединяет устройства в <b>одной</b> локальной сети. Направляет кадры адресно по таблице MAC-адресов.</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-dark-800/80 border border-gray-800">
+                            <span class="font-bold text-rose-400 text-sm block mb-1">Концентратор (Hub) — 1 уровень OSI (Устарел)</span>
+                            <p class="text-gray-400">Устаревшее глупое устройство. Копирует пришедший сигнал и рассылает его абсолютно на все порты, создавая коллизии.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 2: PRACTICE ==================== -->
+        <section id="section-practice" class="hidden space-y-10">
+            <div>
+                <h2 class="text-3xl font-extrabold text-white mb-2">Практическая Лаборатория</h2>
+                <p class="text-gray-400 text-sm">Интерактивные симуляторы сетевых процессов и устранения неполадок.</p>
+            </div>
+
+            <!-- Simulator 1: Packet Delivery visualizer -->
+            <div class="glass-panel rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="send" class="w-5 h-5 text-cyan-400"></i> 1. Симулятор отправки HTTP-запроса
+                        </h3>
+                        <p class="text-xs text-gray-400">Посмотрите, как пакет движется через DNS и Маршрутизатор к веб-серверу</p>
+                    </div>
+                    <button onclick="runPacketSimulation()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 font-semibold text-xs text-white rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i> Запустить Пакет
+                    </button>
+                </div>
+
+                <!-- Pipeline Display -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center relative">
+                    <!-- Step 1: PC -->
+                    <div id="sim-node-pc" class="glass-card rounded-2xl p-5 border border-cyan-500/30 transition-all">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-2">
+                            <i data-lucide="laptop" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Клиент (Ваш ПК)</h4>
+                        <p class="text-[11px] text-gray-400 mt-1 code-font">192.168.1.15</p>
+                        <span id="sim-status-pc" class="mt-3 inline-block px-2 py-0.5 rounded text-[10px] bg-dark-900 text-gray-400">Готов</span>
+                    </div>
+
+                    <!-- Step 2: DNS Server -->
+                    <div id="sim-node-dns" class="glass-card rounded-2xl p-5 transition-all">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                            <i data-lucide="database" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">DNS Сервер</h4>
+                        <p class="text-[11px] text-gray-400 mt-1 code-font">8.8.8.8</p>
+                        <span id="sim-status-dns" class="mt-3 inline-block px-2 py-0.5 rounded text-[10px] bg-dark-900 text-gray-400">Ожидание</span>
+                    </div>
+
+                    <!-- Step 3: Router -->
+                    <div id="sim-node-router" class="glass-card rounded-2xl p-5 transition-all">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2">
+                            <i data-lucide="router" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Шлюз / Router</h4>
+                        <p class="text-[11px] text-gray-400 mt-1 code-font">192.168.1.1</p>
+                        <span id="sim-status-router" class="mt-3 inline-block px-2 py-0.5 rounded text-[10px] bg-dark-900 text-gray-400">Ожидание</span>
+                    </div>
+
+                    <!-- Step 4: Web Server -->
+                    <div id="sim-node-server" class="glass-card rounded-2xl p-5 transition-all">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                            <i data-lucide="server" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Web Сервер</h4>
+                        <p class="text-[11px] text-gray-400 mt-1 code-font">142.250.190.46</p>
+                        <span id="sim-status-server" class="mt-3 inline-block px-2 py-0.5 rounded text-[10px] bg-dark-900 text-gray-400">Ожидание</span>
+                    </div>
+                </div>
+
+                <!-- Simulation Output Terminal -->
+                <div class="bg-dark-900 rounded-2xl p-4 border border-gray-800 code-font text-xs space-y-1.5 h-32 overflow-y-auto" id="sim-log">
+                    <p class="text-gray-500">// Нажмите "Запустить Пакет" для начала симуляции запроса HTTP GET example.com...</p>
+                </div>
+            </div>
+
+            <!-- Simulator 2: Interactive Subnet Calculator & Diagnostics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Subnet Calc -->
+                <div class="glass-panel rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i> IPv4 Калькулятор Подсети (CIDR)
+                    </h3>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-400 mb-1">IP-Адрес и Маска (CIDR):</label>
+                            <input type="text" id="cidr-input" value="192.168.1.50/24" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500 focus:outline-none">
+                        </div>
+                        <button onclick="calculateSubnet()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 font-semibold text-white rounded-xl transition-all">
+                            Рассчитать параметры
+                        </button>
+
+                        <div id="subnet-result" class="hidden p-4 rounded-xl bg-dark-900/90 border border-gray-800 space-y-2 font-mono text-xs text-gray-300">
+                            <div><span class="text-gray-500">Маска сети:</span> <span id="res-mask" class="text-emerald-400"></span></div>
+                            <div><span class="text-gray-500">Адрес сети:</span> <span id="res-net" class="text-white"></span></div>
+                            <div><span class="text-gray-500">Broadcast адрес:</span> <span id="res-bcast" class="text-white"></span></div>
+                            <div><span class="text-gray-500">Доступно хостов:</span> <span id="res-hosts" class="text-cyan-400"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Terminal Console -->
+                <div class="glass-panel rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="terminal" class="w-5 h-5 text-cyan-400"></i> Интерактивная Консоль Диагностики
+                    </h3>
+                    <p class="text-xs text-gray-400">Доступные команды: <code class="text-cyan-300">ping google.com</code>, <code class="text-cyan-300">nslookup ya.ru</code>, <code class="text-cyan-300">help</code></p>
+                    <div class="bg-dark-900 border border-gray-800 rounded-2xl p-3 h-44 overflow-y-auto code-font text-xs space-y-2" id="term-output">
+                        <p class="text-gray-400">NetLearn Terminal v1.0. Введите команду ниже.</p>
+                    </div>
+                    <form onsubmit="handleTerminalSubmit(event)" class="flex gap-2">
+                        <input type="text" id="term-input" placeholder="ping google.com" class="flex-1 bg-dark-900 border border-gray-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-brand-500 focus:outline-none">
+                        <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 rounded-xl text-xs font-semibold text-white">Выполнить</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 3: QUIZ ==================== -->
+        <section id="section-quiz" class="hidden max-w-3xl mx-auto space-y-8">
+            <!-- User Registration Modal/State -->
+            <div id="quiz-auth-card" class="glass-panel rounded-3xl p-8 space-y-6 text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center glow-cyan">
+                    <i data-lucide="user-check" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Авторизация Студента</h2>
+                    <p class="text-sm text-gray-400 mt-1">Введите ваше имя и фамилию для сохранения результата в общую базу данных</p>
+                </div>
+                <div class="space-y-4 max-w-md mx-auto">
+                    <input type="text" id="student-name" placeholder="Например: Иван Иванов" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand-500 focus:outline-none text-center font-medium">
+                    <button onclick="startQuiz()" class="w-full py-3 bg-gradient-to-r from-brand-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 font-bold text-white rounded-xl shadow-lg shadow-brand-500/20 transition-all flex items-center justify-center gap-2">
+                        Начать Тестирование <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Running State -->
+            <div id="quiz-runner" class="hidden space-y-6">
+                <!-- Progress Header -->
+                <div class="glass-panel rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-gray-400 uppercase tracking-widest font-semibold block">Вопрос</span>
+                        <span class="text-lg font-bold text-white"><span id="quiz-current-idx">1</span> из <span id="quiz-total-count">6</span></span>
+                    </div>
+                    <div class="w-1/3 bg-dark-900 h-2.5 rounded-full overflow-hidden border border-gray-800">
+                        <div id="quiz-progress-bar" class="bg-brand-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="glass-panel rounded-3xl p-6 md:p-8 space-y-6">
+                    <h3 id="quiz-question-text" class="text-xl font-bold text-white leading-snug">
+                        <!-- Dynamic Question -->
+                    </h3>
+
+                    <!-- Options Container -->
+                    <div id="quiz-options-container" class="space-y-3">
+                        <!-- Dynamic Options Buttons -->
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex justify-between items-center">
+                    <button onclick="abortQuiz()" class="text-xs text-gray-500 hover:text-gray-300">Сбросить тест</button>
+                    <button id="quiz-next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 bg-brand-600 disabled:opacity-50 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2">
+                        Следующий вопрос <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Result View & Mistake Breakdown -->
+            <div id="quiz-results-card" class="hidden space-y-8">
+                <div class="glass-panel rounded-3xl p-8 text-center space-y-6 border border-brand-500/30">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center glow-emerald">
+                        <i data-lucide="award" class="w-10 h-10"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white">Тест Завершен!</h2>
+                        <p class="text-gray-400 text-sm mt-1">Результат пользователя: <span id="res-student-name" class="text-cyan-400 font-bold"></span></p>
+                    </div>
+
+                    <div class="inline-flex items-center gap-6 px-6 py-4 rounded-2xl bg-dark-900 border border-gray-800">
+                        <div>
+                            <span class="block text-xs text-gray-500 uppercase font-semibold">Набрано баллов</span>
+                            <span id="res-score-text" class="text-3xl font-extrabold text-white">0 / 0</span>
+                        </div>
+                        <div class="h-8 w-px bg-gray-800"></div>
+                        <div>
+                            <span class="block text-xs text-gray-500 uppercase font-semibold">Процент</span>
+                            <span id="res-percentage-text" class="text-3xl font-extrabold text-emerald-400">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Review (Разбор Ошибок) -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="file-search" class="w-5 h-5 text-cyan-400"></i> Разбор ваших ответов
+                    </h3>
+                    <div id="quiz-breakdown-list" class="space-y-4">
+                        <!-- Dynamic Mistakes Breakdown Cards -->
+                    </div>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button onclick="resetQuizState()" class="px-6 py-3 bg-dark-700 hover:bg-dark-600 text-white font-bold rounded-xl text-sm transition-all inline-flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Пройти тест заново
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 4: ADMIN ==================== -->
+        <section id="section-admin" class="hidden space-y-6">
+            <!-- Auth Lock -->
+            <div id="admin-auth-box" class="glass-panel max-w-md mx-auto rounded-3xl p-8 text-center space-y-4">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                    <i data-lucide="lock" class="w-7 h-7"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Вход для Преподавателя</h2>
+                <p class="text-xs text-gray-400">Введите пароль администратора для просмотра общей статистики результатов</p>
+                <div class="space-y-3">
+                    <input type="password" id="admin-pass-input" placeholder="Пароль (по умолч.: admin)" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-center focus:outline-none focus:border-rose-500 text-sm">
+                    <button onclick="loginAdmin()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 font-bold text-white text-sm rounded-xl transition-all">
+                        Войти в панель
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="admin-dashboard" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-rose-500"></i> Журнал Результатов Студентов
+                        </h2>
+                        <p class="text-xs text-gray-400">Записи хранятся в облачной базе данных Firebase</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="fetchAdminResults()" class="px-3 py-1.5 bg-dark-700 hover:bg-dark-600 rounded-xl text-xs text-gray-300 font-medium flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Обновить
+                        </button>
+                        <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-xl text-xs font-semibold">
+                            Выйти
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-300">
+                            <thead class="bg-dark-800/90 text-xs text-gray-400 uppercase font-mono">
+                                <tr>
+                                    <th class="px-6 py-3.5">Студент</th>
+                                    <th class="px-6 py-3.5">Баллы</th>
+                                    <th class="px-6 py-3.5">Успешность</th>
+                                    <th class="px-6 py-3.5">Дата и время</th>
+                                    <th class="px-6 py-3.5 text-right">Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body" class="divide-y divide-gray-800 font-medium">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-8 text-center text-gray-500 text-xs">
+                                        Загрузка результатов из базы данных...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-800 glass-panel py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 NetLearn CS Platform. Обучение Компьютерным Сетям.</p>
+            <div class="flex gap-4 text-gray-400">
+                <span class="hover:text-cyan-400 cursor-pointer" onclick="switchTab('theory')">Теория</span>
+                <span class="hover:text-cyan-400 cursor-pointer" onclick="switchTab('practice')">Практика</span>
+                <span class="hover:text-cyan-400 cursor-pointer" onclick="switchTab('quiz')">Тестирование</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- APP SCRIPT & FIREBASE INTEGRATION -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase Configuration (Demo / Realtime DB endpoint)
+        const firebaseConfig = {
+            databaseURL: "https://netlearn-cs-default-rtdb.firebaseio.com"
+        };
+
+        let db = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+        } catch (e) {
+            console.warn("Firebase initialized in offline/fallback mode.", e);
+        }
+
+        // ================= Global App State =================
+        const QUIZ_DATA = [
+            {
+                id: 1,
+                question: "На каком уровне модели OSI работает сетевой маршутизатор (Router) и передаются IP-пакеты?",
+                options: [
+                    "1. Физический уровень (Physical)",
+                    "2. Канальный уровень (Data Link)",
+                    "3. Сетевой уровень (Network)",
+                    "4. Транспортный уровень (Transport)"
+                ],
+                correct: 2, // Index 2 -> Network
+                explanation: "Маршрутизаторы работают на 3-м (Сетевом) уровне OSI, определяя оптимальные пути передачи IP-пакетов между разными сетями."
+            },
+            {
+                id: 2,
+                question: "В чем ключевое отличие протокола UDP от TCP?",
+                options: [
+                    "UDP шифрует все данные по умолчанию",
+                    "UDP не требует установления соединения и не гарантирует доставку пакетов",
+                    "UDP работает только в оптоволоконных кабелях",
+                    "UDP гарантирует 100% порядок получения данных"
+                ],
+                correct: 1,
+                explanation: "UDP — это протокол без установления соединения. Он жертвует надежностью ради максимальной скорости и минимальных задержек."
+            },
+            {
+                id: 3,
+                question: "Какая маска подсети соответствует CIDR нотации /24?",
+                options: [
+                    "255.255.0.0",
+                    "255.255.255.0",
+                    "255.255.255.128",
+                    "255.0.0.0"
+                ],
+                correct: 1,
+                explanation: "/24 означает, что 24 бита выделены под сетевую часть (3 байта по 255): 255.255.255.0."
+            },
+            {
+                id: 4,
+                question: "Какой протокол отвечает за автоматическое преобразование доменных имен (например, google.com) в IP-адреса?",
+                options: [
+                    "DHCP",
+                    "ARP",
+                    "DNS",
+                    "HTTP"
+                ],
+                correct: 2,
+                explanation: "DNS (Domain Name System) выполняет функцию распределенной телефонной книги Интернета, сопоставляя имена с IP-адресами."
+            },
+            {
+                id: 5,
+                question: "Чем отличается Коммутатор (Switch) от устаревшего Концентратора (Hub)?",
+                options: [
+                    "Switch передает данные адресно конкретному получателю по MAC-адресу",
+                    "Hub умеет фильтровать вирусы в сети",
+                    "Switch работает только с белым IP адресом",
+                    "Ничем, это одно и то же устройство"
+                ],
+                correct: 0,
+                explanation: "Switch запоминает MAC-адреса портов и отправляет кадр строго адресату, тогда как Hub бездумно дублирует сигнал на все устройства."
+            },
+            {
+                id: 6,
+                question: "На каком порту по умолчанию работает защищенный протокол HTTPS?",
+                options: [
+                    "Порт 80",
+                    "Порт 21",
+                    "Порт 443",
+                    "Порт 22"
+                ],
+                correct: 2,
+                explanation: "HTTPS использует зашифрованный порт 443 (SSL/TLS). Порт 80 используется обычным незащищенным HTTP."
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let userAnswers = [];
+        let currentStudentName = "";
+
+        // ================= Tab Navigation =================
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('section[id^="section-"]').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`section-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-cyan-400', 'bg-dark-700', 'shadow-sm');
+                btn.classList.add('text-gray-400');
+            });
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if(activeNav) {
+                activeNav.classList.add('text-cyan-400', 'bg-dark-700', 'shadow-sm');
+                activeNav.classList.remove('text-gray-400');
+            }
+            document.getElementById('mobile-menu').classList.add('hidden');
+        };
+
+        window.toggleMobileMenu = function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        };
+
+        // ================= Interactive Practice Simulators =================
+        window.runPacketSimulation = async function() {
+            const log = document.getElementById('sim-log');
+            log.innerHTML = '';
+
+            const appendLog = (msg, color = 'text-gray-300') => {
+                const p = document.createElement('p');
+                p.className = `${color} leading-relaxed`;
+                p.innerHTML = `<span class="text-gray-500">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+                log.appendChild(p);
+                log.scrollTop = log.scrollHeight;
+            };
+
+            const setNodeStatus = (nodeId, status, bgClass) => {
+                const badge = document.getElementById(`sim-status-${nodeId}`);
+                const card = document.getElementById(`sim-node-${nodeId}`);
+                badge.textContent = status;
+                badge.className = `mt-3 inline-block px-2 py-0.5 rounded text-[10px] ${bgClass}`;
+            };
+
+            // Reset States
+            ['pc','dns','router','server'].forEach(id => setNodeStatus(id, 'Ожидание', 'bg-dark-900 text-gray-500'));
+
+            appendLog('🚀 Запуск генерации пакета HTTP GET request...', 'text-cyan-400');
+            setNodeStatus('pc', 'Формирование', 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30');
+            await new Promise(r => setTimeout(r, 1000));
+
+            appendLog('🔍 1. ПК запрашивает IP адрес для domain "example.com" у DNS...', 'text-purple-400');
+            setNodeStatus('dns', 'Запрос IP', 'bg-purple-500/20 text-purple-400 border border-purple-500/30');
+            await new Promise(r => setTimeout(r, 1200));
+
+            appendLog('✅ DNS ответил: example.com -> 142.250.190.46', 'text-emerald-400');
+            await new Promise(r => setTimeout(r, 800));
+
+            appendLog('🌐 2. Отправка пакета на локальный шлюз (Router)...', 'text-yellow-400');
+            setNodeStatus('router', 'Маршрутизация', 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30');
+            await new Promise(r => setTimeout(r, 1000));
+
+            appendLog('📡 3. Пакет прошел NAT и доставлен на удаленный Web-Сервер!', 'text-blue-400');
+            setNodeStatus('server', '200 OK', 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30');
+            appendLog('🎉 Успех: Web-страница успешно получена и отрисована в браузере!', 'text-emerald-300 font-bold');
+        };
+
+        window.calculateSubnet = function() {
+            const val = document.getElementById('cidr-input').value.trim();
+            const parts = val.split('/');
+            if(parts.length !== 2) return alert('Введите корректный CIDR, например 192.168.1.0/24');
+
+            const ip = parts[0];
+            const maskBits = parseInt(parts[1]);
+
+            if(isNaN(maskBits) || maskBits < 0 || maskBits > 32) return alert('Маска должна быть от 0 до 32');
+
+            // Calculation logic
+            const mask = [];
+            for (let i = 0; i < 4; i++) {
+                const n = Math.min(Math.max(maskBits - i * 8, 0), 8);
+                mask.push(256 - Math.pow(2, 8 - n));
+            }
+
+            const hosts = Math.pow(2, 32 - maskBits) - 2;
+
+            document.getElementById('res-mask').textContent = mask.join('.');
+            document.getElementById('res-net').textContent = `${ip} (сеть /${maskBits})`;
+            document.getElementById('res-bcast').textContent = ip.replace(/\.\d+$/, '.255');
+            document.getElementById('res-hosts').textContent = hosts > 0 ? hosts : 0;
+            document.getElementById('subnet-result').classList.remove('hidden');
+        };
+
+        window.handleTerminalSubmit = function(e) {
+            e.preventDefault();
+            const input = document.getElementById('term-input');
+            const cmd = input.value.trim();
+            if(!cmd) return;
+
+            const term = document.getElementById('term-output');
+            const userP = document.createElement('p');
+            userP.className = 'text-cyan-400';
+            userP.textContent = `$ ${cmd}`;
+            term.appendChild(userP);
+
+            const resP = document.createElement('p');
+            resP.className = 'text-gray-300';
+
+            if (cmd.startsWith('ping')) {
+                const host = cmd.split(' ')[1] || 'google.com';
+                resP.innerHTML = `PING ${host} (142.250.190.46): 56 data bytes<br>` +
+                                 `64 bytes from 142.250.190.46: icmp_seq=0 ttl=116 time=14.2 ms<br>` +
+                                 `64 bytes from 142.250.190.46: icmp_seq=1 ttl=116 time=13.8 ms<br>` +
+                                 `<span class="text-emerald-400">--- ${host} ping statistics --- 0% packet loss</span>`;
+            } else if (cmd.startsWith('nslookup')) {
+                const host = cmd.split(' ')[1] || 'ya.ru';
+                resP.innerHTML = `Server: 8.8.8.8<br>Address: 8.8.8.8#53<br><br>Non-authoritative answer:<br>Name: ${host}<br>Address: 77.88.55.242`;
+            } else if (cmd === 'help') {
+                resP.textContent = 'Доступные команды: ping <host>, nslookup <domain>, clear';
+            } else if (cmd === 'clear') {
+                term.innerHTML = '';
+                input.value = '';
+                return;
+            } else {
+                resP.className = 'text-rose-400';
+                resP.textContent = `Команда не найдена: ${cmd}. Введите 'help'`;
+            }
+
+            term.appendChild(resP);
+            term.scrollTop = term.scrollHeight;
+            input.value = '';
+        };
+
+        // ================= Quiz Logic & Realtime DB =================
+        window.startQuiz = function() {
+            const nameInput = document.getElementById('student-name');
+            const name = nameInput.value.trim();
+            if(!name) {
+                alert('Пожалуйста, введите ваше имя для продолжения');
+                return;
+            }
+
+            currentStudentName = name;
+            currentQuestionIdx = 0;
+            userAnswers = [];
+
+            document.getElementById('quiz-auth-card').classList.add('hidden');
+            document.getElementById('quiz-runner').classList.remove('hidden');
+            document.getElementById('quiz-total-count').textContent = QUIZ_DATA.length;
+
+            renderQuestion();
+        };
+
+        function renderQuestion() {
+            const q = QUIZ_DATA[currentQuestionIdx];
+            document.getElementById('quiz-current-idx').textContent = currentQuestionIdx + 1;
+
+            const progressPct = ((currentQuestionIdx + 1) / QUIZ_DATA.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+
+            document.getElementById('quiz-question-text').textContent = q.question;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-xl glass-card hover:bg-dark-700 border border-gray-800 transition-all font-medium text-sm flex items-center justify-between group`;
+                btn.onclick = () => selectOption(idx, btn);
+                btn.innerHTML = `
+                    <span>${optText}</span>
+                    <div class="w-5 h-5 rounded-full border border-gray-600 group-hover:border-brand-500 flex items-center justify-center opt-radio">
+                        <div class="w-2.5 h-2.5 rounded-full bg-brand-500 hidden"></div>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+
+            document.getElementById('quiz-next-btn').disabled = true;
+        }
+
+        function selectOption(selectedIdx, btnElement) {
+            userAnswers[currentQuestionIdx] = selectedIdx;
+
+            // Highlight selected option
+            document.querySelectorAll('#quiz-options-container button').forEach(b => {
+                b.classList.remove('border-brand-500', 'bg-dark-700');
+                b.querySelector('.opt-radio div').classList.add('hidden');
+            });
+
+            btnElement.classList.add('border-brand-500', 'bg-dark-700');
+            btnElement.querySelector('.opt-radio div').classList.remove('hidden');
+
+            document.getElementById('quiz-next-btn').disabled = false;
+        }
+
+        window.nextQuestion = function() {
+            if(currentQuestionIdx < QUIZ_DATA.length - 1) {
+                currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        };
+
+        function finishQuiz() {
+            document.getElementById('quiz-runner').classList.add('hidden');
+            document.getElementById('quiz-results-card').classList.remove('hidden');
+
+            let score = 0;
+            const mistakes = [];
+
+            QUIZ_DATA.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const isCorrect = uAns === q.correct;
+                if(isCorrect) {
+                    score++;
+                } else {
+                    mistakes.push({
+                        questionId: q.id,
+                        question: q.question,
+                        userAnswer: q.options[uAns] || "Нет ответа",
+                        correctAnswer: q.options[q.correct],
+                        explanation: q.explanation
+                    });
+                }
+            });
+
+            const pct = Math.round((score / QUIZ_DATA.length) * 100);
+
+            document.getElementById('res-student-name').textContent = currentStudentName;
+            document.getElementById('res-score-text').textContent = `${score} / ${QUIZ_DATA.length}`;
+            document.getElementById('res-percentage-text').textContent = `${pct}%`;
+
+            // Render Mistakes Breakdown
+            const breakdownContainer = document.getElementById('quiz-breakdown-list');
+            breakdownContainer.innerHTML = '';
+
+            QUIZ_DATA.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const isCorrect = uAns === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `glass-panel rounded-2xl p-5 border-l-4 ${isCorrect ? 'border-emerald-500' : 'border-rose-500'} space-y-3`;
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-4">
+                        <h4 class="font-bold text-white text-sm">${idx + 1}. ${q.question}</h4>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                            ${isCorrect ? 'Верно' : 'Ошибка'}
+                        </span>
+                    </div>
+                    <div class="text-xs space-y-1">
+                        <p class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'} font-medium">Ваш ответ: ${q.options[uAns]}</p>
+                        ${!isCorrect ? `<p class="text-emerald-400 font-medium">Правильный ответ: ${q.options[q.correct]}</p>` : ''}
+                    </div>
+                    <div class="p-3 rounded-xl bg-dark-900 border border-gray-800 text-xs text-gray-300">
+                        <span class="font-bold text-cyan-400 block mb-0.5">Разбор правила:</span>
+                        ${q.explanation}
+                    </div>
+                `;
+                breakdownContainer.appendChild(card);
+            });
+
+            // Save payload to Firebase
+            const resultData = {
+                studentName: currentStudentName,
+                score: score,
+                total: QUIZ_DATA.length,
+                percentage: pct,
+                timestamp: new Date().toLocaleString('ru-RU'),
+                mistakesCount: mistakes.length
+            };
+
+            if(db) {
+                try {
+                    const resultsRef = ref(db, 'quiz_results');
+                    push(resultsRef, resultData);
+                } catch(err) {
+                    console.error("Error saving to Firebase:", err);
+                }
+            } else {
+                // LocalStorage Fallback if Firebase isn't configured
+                const local = JSON.parse(localStorage.getItem('local_quiz_results') || '[]');
+                local.push(resultData);
+                localStorage.setItem('local_quiz_results', JSON.stringify(local));
+            }
+        }
+
+        window.resetQuizState = function() {
+            document.getElementById('quiz-results-card').classList.add('hidden');
+            document.getElementById('quiz-auth-card').classList.remove('hidden');
+            document.getElementById('student-name').value = '';
+        };
+
+        window.abortQuiz = function() {
+            if(confirm('Вы уверены, что хотите сбросить текущий тест?')) {
+                resetQuizState();
+                document.getElementById('quiz-runner').classList.add('hidden');
+            }
+        };
+
+        // ================= Admin Panel Logic =================
+        window.loginAdmin = function() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if(pass === 'admin' || pass === 'admin123') {
+                document.getElementById('admin-auth-box').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                fetchAdminResults();
+            } else {
+                alert('Неверный пароль администратора!');
+            }
+        };
+
+        window.logoutAdmin = function() {
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('admin-auth-box').classList.remove('hidden');
+            document.getElementById('admin-pass-input').value = '';
+        };
+
+        window.fetchAdminResults = function() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500 text-xs">Загрузка данных...</td></tr>';
+
+            if(db) {
+                const resultsRef = ref(db, 'quiz_results');
+                onValue(resultsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    renderTableRows(data ? Object.values(data) : []);
+                }, { onlyOnce: true });
+            } else {
+                const local = JSON.parse(localStorage.getItem('local_quiz_results') || '[]');
+                renderTableRows(local);
+            }
+        };
+
+        function renderTableRows(items) {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+
+            if(!items || items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-gray-500 text-xs">Записей результатов пока нет.</td></tr>';
+                return;
+            }
+
+            items.reverse().forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-dark-800/50 transition-colors';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-white flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full bg-brand-500/10 text-brand-400 font-bold flex items-center justify-center text-xs">
+                            ${item.studentName.charAt(0).toUpperCase()}
+                        </div>
+                        ${escapeHtml(item.studentName)}
+                    </td>
+                    <td class="px-6 py-4">${item.score} / ${item.total}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${item.percentage >= 70 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                            ${item.percentage}%
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-xs text-gray-400 font-mono">${item.timestamp}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="alert('Ошибок у пользователя: ${item.mistakesCount || 0}')" class="text-xs text-cyan-400 hover:text-cyan-300 font-semibold">
+                            Детали
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+        }
+
+        // Initialize icons
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
